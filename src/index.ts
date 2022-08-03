@@ -74,17 +74,15 @@ export class UWebSocketAdapter implements WebSocketAdapter {
     this.instance = null;
   }
 
-  async create(port: number): Promise<UWS.TemplatedApp> {
-    return new Promise((resolve, reject) => {
-      this.instance.listen(port, (token) => {
+  create(port: number): UWS.TemplatedApp {
+    this.instance.listen(port, (token) => {
         if (token) {
           logger.log(`Listening to port ${port}`)
           this.listenSocket = token;
-          resolve(this.instance);
         } else {
-          reject('Can\'t start listening...');
+           logger.error(`Cannot listen to port ${port}`)
         }
-      })
-    });
+    })
+    return this.instance
   }
 }
