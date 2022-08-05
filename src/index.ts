@@ -10,6 +10,7 @@ const logger = new Logger('UWS');
 export class UWebSocketAdapter implements WebSocketAdapter {
   private instance: UWS.TemplatedApp = null;
   private listenSocket: string = null;
+  private wsSet = new Set<UWS.WebSocket>()
 
   constructor(args: {
     sslKey?: string;
@@ -33,11 +34,15 @@ export class UWebSocketAdapter implements WebSocketAdapter {
           configurable: false,
           value: new events.EventEmitter(),
         });
+        this.wsSet.add(socket)
         callback(socket);
       },
       message: (socket, message, isBinary) => {
         socket['emitter'].emit('message', { message, isBinary });
       },
+      close: (socket) => {
+        this.wsSet.delete(socket)
+      }
     }).any('/*', (res, req) => {
       res.end('Nothing to see here!');
     });
@@ -69,8 +74,13 @@ export class UWebSocketAdapter implements WebSocketAdapter {
     return process(messageHandler.callback(message.data));
   }
 
+  dispose(): any {
+    this.close()
+  }
+
   close(): any {
     UWS.us_listen_socket_close(this.listenSocket);
+    this.wsSet.forEach(ws => ws.close())
     this.instance = null;
   }
 
