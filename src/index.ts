@@ -28,6 +28,8 @@ export class UWebSocketAdapter implements WebSocketAdapter {
 
   bindClientConnect(server: UWS.TemplatedApp, callback: Function): any {
     this.instance.ws('/*', {
+      compression: UWS.SHARED_COMPRESSOR,
+
       open: (socket) => {
         Object.defineProperty(socket, 'emitter', {
           configurable: false,
