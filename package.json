@@ -1,6 +1,6 @@
 {
   "name": "@proton/nestjs-uws",
-  "version": "1.3.18",
+  "version": "1.3.19",
   "description": "NestJS UWebSocket.js adapter",
   "license": "MIT",
   "readmeFilename": "README.md",
